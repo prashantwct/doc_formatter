@@ -1289,6 +1289,7 @@ def detect_list_level(p):
     return True, ilvl
 
 
+def format_table(tbl, theme):
     """Apply professional formatting to a table element."""
     T = THEMES[theme]
     ns = NS["w"]
