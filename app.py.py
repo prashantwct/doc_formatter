@@ -1,7 +1,59 @@
 import streamlit as st
 import os
-from conservation_doc_formatter import format_document, PAGE_LAYOUTS, INDENT_PROFILES
 import conservation_doc_formatter as cdf
+from conservation_doc_formatter import format_document
+
+# ── Graceful fallback if deployed formatter predates PAGE_LAYOUTS / INDENT_PROFILES ──
+try:
+    from conservation_doc_formatter import PAGE_LAYOUTS, INDENT_PROFILES
+except ImportError:
+    PAGE_LAYOUTS = {
+        "a4_standard": {"page_width": 11906, "page_height": 16838,
+                        "margin_top": 1440, "margin_bottom": 1440,
+                        "margin_left": 1701, "margin_right": 1701,
+                        "margin_header": 720, "margin_footer": 720,
+                        "content_width": 8504, "gutter": 0},
+        "a4_wide":     {"page_width": 11906, "page_height": 16838,
+                        "margin_top": 1080, "margin_bottom": 1080,
+                        "margin_left": 1080, "margin_right": 1080,
+                        "margin_header": 540, "margin_footer": 540,
+                        "content_width": 9746, "gutter": 0},
+        "us_letter":   {"page_width": 12240, "page_height": 15840,
+                        "margin_top": 1440, "margin_bottom": 1440,
+                        "margin_left": 1440, "margin_right": 1440,
+                        "margin_header": 720, "margin_footer": 720,
+                        "content_width": 9360, "gutter": 0},
+    }
+    INDENT_PROFILES = {
+        "formal":    {"body_first_line": 0,   "body_left": 0,  "body_right": 0,
+                      "pullquote_left": 504,  "pullquote_right": 504,
+                      "callout_left": 180,    "callout_right": 180,
+                      "bullet_left": 504,     "bullet_hanging": 252,
+                      "number_left": 504,     "number_hanging": 252,
+                      "caption_left": 0,      "caption_right": 0,
+                      "heading1_left": 0,     "heading2_left": 0, "heading3_left": 0},
+        "editorial": {"body_first_line": 360, "body_left": 0,  "body_right": 0,
+                      "pullquote_left": 720,  "pullquote_right": 720,
+                      "callout_left": 216,    "callout_right": 216,
+                      "bullet_left": 576,     "bullet_hanging": 288,
+                      "number_left": 576,     "number_hanging": 288,
+                      "caption_left": 0,      "caption_right": 0,
+                      "heading1_left": 0,     "heading2_left": 288, "heading3_left": 432},
+        "compact":   {"body_first_line": 0,   "body_left": 0,  "body_right": 0,
+                      "pullquote_left": 360,  "pullquote_right": 360,
+                      "callout_left": 144,    "callout_right": 144,
+                      "bullet_left": 432,     "bullet_hanging": 216,
+                      "number_left": 432,     "number_hanging": 216,
+                      "caption_left": 0,      "caption_right": 0,
+                      "heading1_left": 0,     "heading2_left": 0, "heading3_left": 216},
+    }
+
+# Patch onto the module so format_document can reach them if it looks them up
+if not hasattr(cdf, "PAGE_LAYOUTS"):
+    cdf.PAGE_LAYOUTS    = PAGE_LAYOUTS
+if not hasattr(cdf, "INDENT_PROFILES"):
+    cdf.INDENT_PROFILES = INDENT_PROFILES
+
 
 st.set_page_config(page_title="WCT Report Formatter", layout="centered")
 
