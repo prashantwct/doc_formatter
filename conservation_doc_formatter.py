@@ -1683,6 +1683,44 @@ def format_document(input_path, output_path, theme="forest", report_label=None):
     print(f"  ✓ Done → {output_path}")
 
 
+def _wire_numbering(work_dir, ns_r):
+    """Ensure numbering.xml is referenced in document.xml.rels and [Content_Types].xml."""
+    rels_path = work_dir / "word" / "_rels" / "document.xml.rels"
+    if not rels_path.exists():
+        return
+
+    rels_tree = etree.parse(str(rels_path))
+    rels_root = rels_tree.getroot()
+
+    # Add relationship only if not already present
+    has_num = any("numbering" in r.get("Target", "") for r in rels_root)
+    if not has_num:
+        existing_ids = [
+            int(r.get("Id", "rId0").replace("rId", "0") or "0")
+            for r in rels_root if r.get("Id", "").startswith("rId")
+        ]
+        new_id = f"rId{max(existing_ids, default=0) + 1}"
+        new_rel = etree.SubElement(rels_root, "Relationship")
+        new_rel.set("Id", new_id)
+        new_rel.set("Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering")
+        new_rel.set("Target", "numbering.xml")
+        rels_tree.write(str(rels_path), xml_declaration=True, encoding="UTF-8", standalone=True)
+
+    # Register in [Content_Types].xml
+    ct_path = work_dir / "[Content_Types].xml"
+    if ct_path.exists():
+        ct_tree = etree.parse(str(ct_path))
+        ct_root = ct_tree.getroot()
+        ct_ns = "http://schemas.openxmlformats.org/package/2006/content-types"
+        existing_parts = [el.get("PartName", "") for el in ct_root]
+        if "/word/numbering.xml" not in existing_parts:
+            new_ct = etree.SubElement(ct_root, f"{{{ct_ns}}}Override")
+            new_ct.set("PartName", "/word/numbering.xml")
+            new_ct.set("ContentType",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml")
+            ct_tree.write(str(ct_path), xml_declaration=True, encoding="UTF-8", standalone=True)
+
+
 def _apply_page_layout(work_dir, theme, ns):
     """
     Patch (or create) the sectPr in document.xml with page size and margins
