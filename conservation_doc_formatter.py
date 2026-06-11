@@ -1,3 +1,10 @@
+Here is the complete, fully corrected **`conservation_doc_formatter.py`** file.
+
+I have cleaned up the duplicate lines inside `format_table` and properly added the `_wire_numbering` function so that everything connects correctly.
+
+You can copy and paste this entire block to completely replace the contents of your `conservation_doc_formatter.py` file:
+
+```python
 """
 Conservation Report Professional Formatter
 ===========================================
@@ -288,7 +295,6 @@ def build_styles_xml(theme):
           xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
           xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml">
 
-  <!-- ── Document defaults ── -->
   <w:docDefaults>
     <w:rPrDefault>
       <w:rPr>
@@ -307,7 +313,6 @@ def build_styles_xml(theme):
     </w:pPrDefault>
   </w:docDefaults>
 
-  <!-- ── Normal ── -->
   <w:style w:type="paragraph" w:default="1" w:styleId="Normal">
     <w:name w:val="Normal"/>
     <w:qFormat/>
@@ -324,7 +329,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── Cover Title ── -->
   <w:style w:type="paragraph" w:styleId="CoverTitle">
     <w:name w:val="CoverTitle"/>
     <w:basedOn w:val="Normal"/>
@@ -344,7 +348,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── Cover Subtitle / Meta ── -->
   <w:style w:type="paragraph" w:styleId="CoverSubtitle">
     <w:name w:val="CoverSubtitle"/>
     <w:basedOn w:val="Normal"/>
@@ -361,7 +364,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── Cover Label (e.g. "INTERIM REPORT") ── -->
   <w:style w:type="paragraph" w:styleId="CoverLabel">
     <w:name w:val="CoverLabel"/>
     <w:basedOn w:val="Normal"/>
@@ -381,7 +383,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── Heading 1: numbered section ── -->
   <w:style w:type="paragraph" w:styleId="Heading1">
     <w:name w:val="heading 1"/>
     <w:basedOn w:val="Normal"/>
@@ -423,7 +424,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── Heading 2 ── -->
   <w:style w:type="paragraph" w:styleId="Heading2">
     <w:name w:val="heading 2"/>
     <w:basedOn w:val="Normal"/>
@@ -463,7 +463,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── Heading 3 ── -->
   <w:style w:type="paragraph" w:styleId="Heading3">
     <w:name w:val="heading 3"/>
     <w:basedOn w:val="Normal"/>
@@ -490,7 +489,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── Caption ── -->
   <w:style w:type="paragraph" w:styleId="Caption">
     <w:name w:val="caption"/>
     <w:basedOn w:val="Normal"/>
@@ -513,7 +511,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── Pull Quote / Key Finding ── -->
   <w:style w:type="paragraph" w:styleId="PullQuote">
     <w:name w:val="PullQuote"/>
     <w:basedOn w:val="Normal"/>
@@ -535,7 +532,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── Callout (Management Rec / Key Concern) ── -->
   <w:style w:type="paragraph" w:styleId="Callout">
     <w:name w:val="Callout"/>
     <w:basedOn w:val="Normal"/>
@@ -552,7 +548,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── List Bullet ── -->
   <w:style w:type="paragraph" w:styleId="ListBullet">
     <w:name w:val="List Bullet"/>
     <w:basedOn w:val="Normal"/>
@@ -571,7 +566,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── List Number ── -->
   <w:style w:type="paragraph" w:styleId="ListNumber">
     <w:name w:val="List Number"/>
     <w:basedOn w:val="Normal"/>
@@ -590,7 +584,6 @@ def build_styles_xml(theme):
     </w:rPr>
   </w:style>
 
-  <!-- ── Table Normal ── -->
   <w:style w:type="table" w:default="1" w:styleId="TableNormal">
     <w:name w:val="Normal Table"/>
     <w:uiPriority w:val="99"/>
@@ -607,7 +600,6 @@ def build_styles_xml(theme):
     </w:tblPr>
   </w:style>
 
-  <!-- ── ConservationTable: professional styled table ── -->
   <w:style w:type="table" w:styleId="ConservationTable">
     <w:name w:val="ConservationTable"/>
     <w:basedOn w:val="TableNormal"/>
@@ -631,7 +623,6 @@ def build_styles_xml(theme):
         <w:right  w:w="140" w:type="dxa"/>
       </w:tblCellMar>
     </w:tblPr>
-    <!-- First row: header shading + bold white -->
     <w:tblStylePr w:type="firstRow">
       <w:pPr><w:jc w:val="left"/></w:pPr>
       <w:rPr>
@@ -642,7 +633,6 @@ def build_styles_xml(theme):
         <w:shd w:val="clear" w:color="auto" w:fill="{T['table_header']}"/>
       </w:tcPr>
     </w:tblStylePr>
-    <!-- Even rows: alternating light shading -->
     <w:tblStylePr w:type="band1Horz">
       <w:tcPr>
         <w:shd w:val="clear" w:color="auto" w:fill="{T['table_alt']}"/>
@@ -650,7 +640,6 @@ def build_styles_xml(theme):
     </w:tblStylePr>
   </w:style>
 
-  <!-- ── TableGrid (fallback) ── -->
   <w:style w:type="table" w:styleId="TableGrid">
     <w:name w:val="Table Grid"/>
     <w:basedOn w:val="TableNormal"/>
@@ -676,7 +665,6 @@ def build_styles_xml(theme):
     </w:tblPr>
   </w:style>
 
-  <!-- ── Header style ── -->
   <w:style w:type="paragraph" w:styleId="Header">
     <w:name w:val="header"/>
     <w:basedOn w:val="Normal"/>
@@ -704,7 +692,6 @@ def build_styles_xml(theme):
     <w:link w:val="Header"/>
   </w:style>
 
-  <!-- ── Footer style ── -->
   <w:style w:type="paragraph" w:styleId="Footer">
     <w:name w:val="footer"/>
     <w:basedOn w:val="Normal"/>
@@ -731,7 +718,6 @@ def build_styles_xml(theme):
     <w:link w:val="Footer"/>
   </w:style>
 
-  <!-- ── Default Paragraph Font ── -->
   <w:style w:type="character" w:default="1" w:styleId="DefaultParagraphFont">
     <w:name w:val="Default Paragraph Font"/>
     <w:uiPriority w:val="1"/>
@@ -739,7 +725,6 @@ def build_styles_xml(theme):
     <w:unhideWhenUsed/>
   </w:style>
 
-  <!-- ── No List ── -->
   <w:style w:type="numbering" w:default="1" w:styleId="NoList">
     <w:name w:val="No List"/>
     <w:uiPriority w:val="99"/>
@@ -835,8 +820,6 @@ def build_footer_xml(theme, report_label="Report"):
 </w:ftr>
 """
 
-
-
 # ─────────────────────────────────────────────────────────────────────────────
 # NUMBERING XML  (bullet + numbered list definitions)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -851,7 +834,6 @@ def build_numbering_xml(theme):
     return f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 
-  <!-- ── Bullet list ── -->
   <w:abstractNum w:abstractNumId="1">
     <w:multiLevelType w:val="hybridMultilevel"/>
     <w:lvl w:ilvl="0">
@@ -898,7 +880,6 @@ def build_numbering_xml(theme):
     </w:lvl>
   </w:abstractNum>
 
-  <!-- ── Numbered list ── -->
   <w:abstractNum w:abstractNumId="2">
     <w:multiLevelType w:val="hybridMultilevel"/>
     <w:lvl w:ilvl="0">
@@ -1288,11 +1269,8 @@ def detect_list_level(p):
     ilvl = int(ilvl_el.get(f"{{{ns}}}val", "0")) if ilvl_el is not None else 0
     return True, ilvl
 
-def format_table(tbl, theme):
-    """Apply professional formatting to a table element."""
-    T = THEMES[theme]
-    ns = NS["w"]
 
+def format_table(tbl, theme):
     """Apply professional formatting to a table element."""
     T = THEMES[theme]
     ns = NS["w"]
@@ -1591,6 +1569,54 @@ def update_section_references(doc_zip, theme, report_label):
 # ─────────────────────────────────────────────────────────────────────────────
 # CORE FORMATTER
 # ─────────────────────────────────────────────────────────────────────────────
+def _wire_numbering(work_dir, ns_r):
+    """Ensure numbering.xml is referenced in document.xml.rels and [Content_Types].xml."""
+    # 1. Update [Content_Types].xml
+    ct_path = work_dir / "[Content_Types].xml"
+    if ct_path.exists():
+        ct_tree = etree.parse(str(ct_path))
+        ct_root = ct_tree.getroot()
+        ct_ns = "http://schemas.openxmlformats.org/package/2006/content-types"
+        existing = [el.get("PartName", "") for el in ct_root]
+        
+        if "/word/numbering.xml" not in existing:
+            new_ct = etree.SubElement(ct_root, f"{{{ct_ns}}}Override")
+            new_ct.set("PartName", "/word/numbering.xml")
+            new_ct.set("ContentType", "application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml")
+        
+        ct_tree.write(str(ct_path), xml_declaration=True, encoding="UTF-8", standalone=True)
+
+    # 2. Update document.xml.rels
+    rels_path = work_dir / "word" / "_rels" / "document.xml.rels"
+    if rels_path.exists():
+        rels_tree = etree.parse(str(rels_path))
+        rels_root = rels_tree.getroot()
+        
+        # Check if numbering relationship already exists
+        has_numbering = False
+        for rel in rels_root:
+            if "numbering.xml" in rel.get("Target", ""):
+                has_numbering = True
+                break
+                
+        if not has_numbering:
+            existing_ids = [int(r.get("Id", "rId0").replace("rId", "0")) for r in rels_root if r.get("Id", "").startswith("rId")]
+            new_id_num = max(existing_ids, default=0) + 1
+            
+            # The root element often has a default namespace, so we try to inherit it or use a raw tag
+            tag_name = rels_root[0].tag if len(rels_root) > 0 else "Relationship"
+            if "}" in tag_name:
+                rel_ns = tag_name.split("}")[0] + "}"
+                new_rel = etree.SubElement(rels_root, f"{rel_ns}Relationship")
+            else:
+                new_rel = etree.SubElement(rels_root, "Relationship")
+                
+            new_rel.set("Id", f"rId{new_id_num}")
+            new_rel.set("Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering")
+            new_rel.set("Target", "numbering.xml")
+            
+            rels_tree.write(str(rels_path), xml_declaration=True, encoding="UTF-8", standalone=True)
+
 def format_document(input_path, output_path, theme="forest", report_label=None):
     """
     Main entry point. Reads input_path, applies professional formatting,
@@ -1856,3 +1882,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+```
