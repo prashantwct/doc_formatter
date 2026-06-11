@@ -1288,6 +1288,10 @@ def detect_list_level(p):
     ilvl = int(ilvl_el.get(f"{{{ns}}}val", "0")) if ilvl_el is not None else 0
     return True, ilvl
 
+def format_table(tbl, theme):
+    """Apply professional formatting to a table element."""
+    T = THEMES[theme]
+    ns = NS["w"]
 
     """Apply professional formatting to a table element."""
     T = THEMES[theme]
