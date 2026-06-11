@@ -44,138 +44,21 @@ from lxml import etree
 # table_header (cell bg), table_alt (alternating row), text_on_primary (always white),
 # callout_bg, callout_text, body_text, caption_colour
 # ─────────────────────────────────────────────────────────────────────────────
-
-# ─────────────────────────────────────────────────────────────────────────────
-# PAGE LAYOUT PROFILES
-# All measurements in DXA (1440 DXA = 1 inch).
-# "content_width" = page_width - margin_left - margin_right (pre-computed)
-# ─────────────────────────────────────────────────────────────────────────────
-PAGE_LAYOUTS = {
-    "a4_standard": {
-        # A4 with generous 1.18" side margins — suits donor / technical reports
-        "page_width":     11906,
-        "page_height":    16838,
-        "margin_top":     1440,   # 1.0"
-        "margin_bottom":  1440,   # 1.0"
-        "margin_left":    1701,   # 1.18"
-        "margin_right":   1701,
-        "margin_header":   720,   # 0.5" from edge
-        "margin_footer":   720,
-        "content_width":  8504,   # 11906 - 2*1701
-        "gutter":            0,
-    },
-    "a4_wide": {
-        # A4 with tighter 0.75" margins — maximises content area
-        "page_width":     11906,
-        "page_height":    16838,
-        "margin_top":     1080,
-        "margin_bottom":  1080,
-        "margin_left":    1080,
-        "margin_right":   1080,
-        "margin_header":   540,
-        "margin_footer":   540,
-        "content_width":  9746,
-        "gutter":            0,
-    },
-    "us_letter": {
-        # US Letter 8.5×11 — 1" margins all round
-        "page_width":     12240,
-        "page_height":    15840,
-        "margin_top":     1440,
-        "margin_bottom":  1440,
-        "margin_left":    1440,
-        "margin_right":   1440,
-        "margin_header":   720,
-        "margin_footer":   720,
-        "content_width":  9360,   # 12240 - 2*1440
-        "gutter":            0,
-    },
-}
-
-# ─────────────────────────────────────────────────────────────────────────────
-# INDENTATION PROFILES
-# left/right/firstLine/hanging all in DXA; None = do not set.
-# Used by both styles.xml generation and runtime paragraph patching.
-# ─────────────────────────────────────────────────────────────────────────────
-INDENT_PROFILES = {
-    # Conservative: suits formal institutional reports
-    "formal": {
-        "body_first_line":    0,     # no first-line indent (block paragraphs)
-        "body_left":          0,
-        "body_right":         0,
-        "pullquote_left":   504,     # 0.35"
-        "pullquote_right":  504,
-        "callout_left":     180,     # 0.125"
-        "callout_right":    180,
-        "bullet_left":      504,     # 0.35"
-        "bullet_hanging":   252,
-        "number_left":      504,
-        "number_hanging":   252,
-        "caption_left":       0,
-        "caption_right":      0,
-        "heading1_left":      0,
-        "heading2_left":      0,
-        "heading3_left":      0,
-    },
-    # Editorial: paragraph first-line indent, wider pull-quotes — suits
-    # narrative-style annual / progress reports
-    "editorial": {
-        "body_first_line":  360,     # 0.25" first-line indent
-        "body_left":          0,
-        "body_right":         0,
-        "pullquote_left":   720,     # 0.5"
-        "pullquote_right":  720,
-        "callout_left":     216,
-        "callout_right":    216,
-        "bullet_left":      576,
-        "bullet_hanging":   288,
-        "number_left":      576,
-        "number_hanging":   288,
-        "caption_left":       0,
-        "caption_right":      0,
-        "heading1_left":      0,
-        "heading2_left":    288,     # subtle step-in for H2
-        "heading3_left":    432,
-    },
-    # Compact: no first-line, minimal margins — suits field reports, data tables
-    "compact": {
-        "body_first_line":    0,
-        "body_left":          0,
-        "body_right":         0,
-        "pullquote_left":   360,
-        "pullquote_right":  360,
-        "callout_left":     144,
-        "callout_right":    144,
-        "bullet_left":      432,
-        "bullet_hanging":   216,
-        "number_left":      432,
-        "number_hanging":   216,
-        "caption_left":       0,
-        "caption_right":      0,
-        "heading1_left":      0,
-        "heading2_left":      0,
-        "heading3_left":    216,
-    },
-}
-
 THEMES = {
     "forest": {
         "name": "Forest Green",
-        "primary":       "1E4D2B",
-        "accent":        "3D6B4F",
-        "accent_light":  "6B9E7A",
-        "cover_sub":     "2B5F45",
-        "table_header":  "D5E8D4",
-        "table_alt":     "F2F8F0",
-        "callout_bg":    "1E4D2B",
+        "primary":       "1E4D2B",   # deep forest green  – cover, mgmt rec
+        "accent":        "3D6B4F",   # medium green        – headings, borders
+        "accent_light":  "6B9E7A",   # muted green         – h2
+        "cover_sub":     "2B5F45",   # cover subtitle bg
+        "table_header":  "D5E8D4",   # pale green          – table header row
+        "table_alt":     "F2F8F0",   # near-white green    – alt table row
+        "callout_bg":    "1E4D2B",   # = primary           – callout box
         "callout_text":  "FFFFFF",
         "caption":       "3D6B4F",
         "footer_rule":   "3D6B4F",
         "body":          "1A1A1A",
         "italic_quote":  "404040",
-        # ── Layout / indentation defaults for this theme ──────────────────
-        "page_layout":   "a4_standard",
-        "indent_profile": "formal",
     },
     "ocean": {
         "name": "Ocean Teal",
@@ -191,8 +74,6 @@ THEMES = {
         "footer_rule":   "1A6B8A",
         "body":          "1A1A1A",
         "italic_quote":  "404040",
-        "page_layout":   "a4_standard",
-        "indent_profile": "editorial",
     },
     "earth": {
         "name": "Earth Ochre",
@@ -208,8 +89,6 @@ THEMES = {
         "footer_rule":   "8B5E3C",
         "body":          "1A1A1A",
         "italic_quote":  "404040",
-        "page_layout":   "a4_standard",
-        "indent_profile": "editorial",
     },
     "slate": {
         "name": "Institutional Slate",
@@ -225,8 +104,6 @@ THEMES = {
         "footer_rule":   "2E5077",
         "body":          "1A1A1A",
         "italic_quote":  "404040",
-        "page_layout":   "us_letter",
-        "indent_profile": "formal",
     },
 }
 
@@ -259,28 +136,6 @@ def xml_el(tag, attribs=None, parent=None):
 def build_styles_xml(theme):
     """Return a complete styles.xml string for the given theme."""
     T = THEMES[theme]
-    IP = INDENT_PROFILES[T.get("indent_profile", "formal")]
-
-    # Helper to emit an <w:ind> element string (only non-zero/non-None attrs)
-    def _ind(left=None, right=None, firstLine=None, hanging=None):
-        attrs = []
-        if left      is not None and left      != 0: attrs.append(f'w:left="{left}"')
-        if right     is not None and right     != 0: attrs.append(f'w:right="{right}"')
-        if firstLine is not None and firstLine != 0: attrs.append(f'w:firstLine="{firstLine}"')
-        if hanging   is not None and hanging   != 0: attrs.append(f'w:hanging="{hanging}"')
-        return f'<w:ind {" ".join(attrs)}/>' if attrs else ''
-
-    body_ind   = _ind(left=IP["body_left"],    right=IP["body_right"],
-                      firstLine=IP["body_first_line"])
-    h1_ind     = _ind(left=IP["heading1_left"])
-    h2_ind     = _ind(left=IP["heading2_left"])
-    h3_ind     = _ind(left=IP["heading3_left"])
-    pq_ind     = _ind(left=IP["pullquote_left"],  right=IP["pullquote_right"])
-    co_ind     = _ind(left=IP["callout_left"],    right=IP["callout_right"])
-    cap_ind    = _ind(left=IP["caption_left"],    right=IP["caption_right"])
-    bul_ind    = _ind(left=IP["bullet_left"],     hanging=IP["bullet_hanging"])
-    num_ind    = _ind(left=IP["number_left"],     hanging=IP["number_hanging"])
-
     xml = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -302,7 +157,6 @@ def build_styles_xml(theme):
       <w:pPr>
         <w:spacing w:after="120" w:line="276" w:lineRule="auto"/>
         <w:jc w:val="both"/>
-        {body_ind}
       </w:pPr>
     </w:pPrDefault>
   </w:docDefaults>
@@ -314,7 +168,6 @@ def build_styles_xml(theme):
     <w:pPr>
       <w:spacing w:after="120" w:line="276" w:lineRule="auto"/>
       <w:jc w:val="both"/>
-      {body_ind}
     </w:pPr>
     <w:rPr>
       <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>
@@ -397,7 +250,6 @@ def build_styles_xml(theme):
       </w:pBdr>
       <w:spacing w:before="360" w:after="100"/>
       <w:jc w:val="left"/>
-      {h1_ind}
       <w:outlineLvl w:val="0"/>
     </w:pPr>
     <w:rPr>
@@ -437,7 +289,6 @@ def build_styles_xml(theme):
       <w:keepLines/>
       <w:spacing w:before="240" w:after="80"/>
       <w:jc w:val="left"/>
-      {h2_ind}
       <w:outlineLvl w:val="1"/>
     </w:pPr>
     <w:rPr>
@@ -475,7 +326,6 @@ def build_styles_xml(theme):
       <w:keepNext/>
       <w:spacing w:before="200" w:after="60"/>
       <w:jc w:val="left"/>
-      {h3_ind}
       <w:outlineLvl w:val="2"/>
     </w:pPr>
     <w:rPr>
@@ -522,7 +372,7 @@ def build_styles_xml(theme):
         <w:left w:val="single" w:sz="24" w:space="12" w:color="{T['accent']}"/>
       </w:pBdr>
       <w:spacing w:before="160" w:after="160"/>
-      {pq_ind}
+      <w:ind w:left="360"/>
       <w:jc w:val="both"/>
     </w:pPr>
     <w:rPr>
@@ -530,61 +380,6 @@ def build_styles_xml(theme):
       <w:i/>
       <w:iCs/>
       <w:color w:val="{T['italic_quote']}"/>
-      <w:sz w:val="22"/>
-      <w:szCs w:val="22"/>
-    </w:rPr>
-  </w:style>
-
-  <!-- ── Callout (Management Rec / Key Concern) ── -->
-  <w:style w:type="paragraph" w:styleId="Callout">
-    <w:name w:val="Callout"/>
-    <w:basedOn w:val="Normal"/>
-    <w:pPr>
-      <w:spacing w:before="120" w:after="60" w:line="240" w:lineRule="auto"/>
-      {co_ind}
-      <w:jc w:val="left"/>
-    </w:pPr>
-    <w:rPr>
-      <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>
-      <w:color w:val="{T['callout_text']}"/>
-      <w:sz w:val="22"/>
-      <w:szCs w:val="22"/>
-    </w:rPr>
-  </w:style>
-
-  <!-- ── List Bullet ── -->
-  <w:style w:type="paragraph" w:styleId="ListBullet">
-    <w:name w:val="List Bullet"/>
-    <w:basedOn w:val="Normal"/>
-    <w:uiPriority w:val="34"/>
-    <w:qFormat/>
-    <w:pPr>
-      <w:spacing w:before="0" w:after="80" w:line="276" w:lineRule="auto"/>
-      {bul_ind}
-      <w:jc w:val="both"/>
-    </w:pPr>
-    <w:rPr>
-      <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>
-      <w:color w:val="{T['body']}"/>
-      <w:sz w:val="22"/>
-      <w:szCs w:val="22"/>
-    </w:rPr>
-  </w:style>
-
-  <!-- ── List Number ── -->
-  <w:style w:type="paragraph" w:styleId="ListNumber">
-    <w:name w:val="List Number"/>
-    <w:basedOn w:val="Normal"/>
-    <w:uiPriority w:val="34"/>
-    <w:qFormat/>
-    <w:pPr>
-      <w:spacing w:before="0" w:after="80" w:line="276" w:lineRule="auto"/>
-      {num_ind}
-      <w:jc w:val="both"/>
-    </w:pPr>
-    <w:rPr>
-      <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>
-      <w:color w:val="{T['body']}"/>
       <w:sz w:val="22"/>
       <w:szCs w:val="22"/>
     </w:rPr>
@@ -836,128 +631,8 @@ def build_footer_xml(theme, report_label="Report"):
 """
 
 
-
 # ─────────────────────────────────────────────────────────────────────────────
-# NUMBERING XML  (bullet + numbered list definitions)
-# ─────────────────────────────────────────────────────────────────────────────
-def build_numbering_xml(theme):
-    """Return a numbering.xml with bullet (abstractNumId=1) and numbered (abstractNumId=2)."""
-    T = THEMES[theme]
-    IP = INDENT_PROFILES[T.get("indent_profile", "formal")]
-    bl = IP["bullet_left"]
-    bh = IP["bullet_hanging"]
-    nl = IP["number_left"]
-    nh = IP["number_hanging"]
-    return f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-
-  <!-- ── Bullet list ── -->
-  <w:abstractNum w:abstractNumId="1">
-    <w:multiLevelType w:val="hybridMultilevel"/>
-    <w:lvl w:ilvl="0">
-      <w:start w:val="1"/>
-      <w:numFmt w:val="bullet"/>
-      <w:lvlText w:val="&#x2022;"/>
-      <w:lvlJc w:val="left"/>
-      <w:pPr>
-        <w:ind w:left="{bl}" w:hanging="{bh}"/>
-        <w:spacing w:after="60"/>
-      </w:pPr>
-      <w:rPr>
-        <w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" w:cs="Arial"/>
-        <w:sz w:val="20"/>
-      </w:rPr>
-    </w:lvl>
-    <w:lvl w:ilvl="1">
-      <w:start w:val="1"/>
-      <w:numFmt w:val="bullet"/>
-      <w:lvlText w:val="&#x25E6;"/>
-      <w:lvlJc w:val="left"/>
-      <w:pPr>
-        <w:ind w:left="{bl + bh}" w:hanging="{bh}"/>
-        <w:spacing w:after="40"/>
-      </w:pPr>
-      <w:rPr>
-        <w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" w:cs="Arial"/>
-        <w:sz w:val="20"/>
-      </w:rPr>
-    </w:lvl>
-    <w:lvl w:ilvl="2">
-      <w:start w:val="1"/>
-      <w:numFmt w:val="bullet"/>
-      <w:lvlText w:val="&#x25AA;"/>
-      <w:lvlJc w:val="left"/>
-      <w:pPr>
-        <w:ind w:left="{bl + 2*bh}" w:hanging="{bh}"/>
-        <w:spacing w:after="40"/>
-      </w:pPr>
-      <w:rPr>
-        <w:rFonts w:ascii="Wingdings" w:hAnsi="Wingdings" w:cs="Arial"/>
-        <w:sz w:val="20"/>
-      </w:rPr>
-    </w:lvl>
-  </w:abstractNum>
-
-  <!-- ── Numbered list ── -->
-  <w:abstractNum w:abstractNumId="2">
-    <w:multiLevelType w:val="hybridMultilevel"/>
-    <w:lvl w:ilvl="0">
-      <w:start w:val="1"/>
-      <w:numFmt w:val="decimal"/>
-      <w:lvlText w:val="%1."/>
-      <w:lvlJc w:val="left"/>
-      <w:pPr>
-        <w:ind w:left="{nl}" w:hanging="{nh}"/>
-        <w:spacing w:after="60"/>
-      </w:pPr>
-      <w:rPr>
-        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>
-        <w:sz w:val="22"/>
-      </w:rPr>
-    </w:lvl>
-    <w:lvl w:ilvl="1">
-      <w:start w:val="1"/>
-      <w:numFmt w:val="lowerLetter"/>
-      <w:lvlText w:val="%2)"/>
-      <w:lvlJc w:val="left"/>
-      <w:pPr>
-        <w:ind w:left="{nl + nh}" w:hanging="{nh}"/>
-        <w:spacing w:after="40"/>
-      </w:pPr>
-      <w:rPr>
-        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>
-        <w:sz w:val="22"/>
-      </w:rPr>
-    </w:lvl>
-  </w:abstractNum>
-
-  <w:num w:numId="1">
-    <w:abstractNumId w:val="1"/>
-  </w:num>
-  <w:num w:numId="2">
-    <w:abstractNumId w:val="2"/>
-  </w:num>
-
-</w:numbering>
-"""
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# SETTINGS XML  (page layout embedded in document settings)
-# ─────────────────────────────────────────────────────────────────────────────
-def build_settings_xml():
-    """Minimal settings.xml with sensible defaults."""
-    return """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:defaultTabStop w:val="720"/>
-  <w:autoHyphenation w:val="0"/>
-  <w:compat>
-    <w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/>
-  </w:compat>
-</w:settings>
-"""
-
-
+# PARAGRAPH CLASSIFIER
 # Decides what kind of content a paragraph is, so we can apply the right style.
 # ─────────────────────────────────────────────────────────────────────────────
 def classify_paragraph(pStyle, text, idx, total):
@@ -1245,50 +920,7 @@ def ensure_run_size(r, half_pts):
 # ─────────────────────────────────────────────────────────────────────────────
 # TABLE FORMATTER
 # ─────────────────────────────────────────────────────────────────────────────
-def set_ind(pPr, left=None, right=None, firstLine=None, hanging=None):
-    """Set indentation on a pPr element."""
-    ns = NS["w"]
-    ind = pPr.find(f"{{{ns}}}ind")
-    if ind is None:
-        ind = etree.Element(f"{{{ns}}}ind")
-        _insert_before_rPr(pPr, ind)
-    # Only set non-None, non-zero values (zero = reset to none)
-    for attr, val in [("left", left), ("right", right), ("firstLine", firstLine), ("hanging", hanging)]:
-        if val is not None:
-            if val == 0:
-                ind.attrib.pop(f"{{{ns}}}{attr}", None)
-            else:
-                ind.set(f"{{{ns}}}{attr}", str(val))
-    # Remove empty ind element
-    if not ind.attrib:
-        pPr.remove(ind)
-    else:
-        _reorder_pPr(pPr)
-
-
-def is_list_paragraph(p):
-    """Returns True if paragraph has numPr (is a list item)."""
-    ns = NS["w"]
-    pPr = p.find(f"{{{ns}}}pPr")
-    if pPr is None:
-        return False
-    return pPr.find(f"{{{ns}}}numPr") is not None
-
-
-def detect_list_level(p):
-    """Returns (is_list, ilvl) - indent level 0-based."""
-    ns = NS["w"]
-    pPr = p.find(f"{{{ns}}}pPr")
-    if pPr is None:
-        return False, 0
-    numPr = pPr.find(f"{{{ns}}}numPr")
-    if numPr is None:
-        return False, 0
-    ilvl_el = numPr.find(f"{{{ns}}}ilvl")
-    ilvl = int(ilvl_el.get(f"{{{ns}}}val", "0")) if ilvl_el is not None else 0
-    return True, ilvl
-
-
+def format_table(tbl, theme):
     """Apply professional formatting to a table element."""
     T = THEMES[theme]
     ns = NS["w"]
@@ -1421,7 +1053,6 @@ def detect_list_level(p):
 def format_paragraph(p, idx, total, theme, section_counter):
     """Apply formatting to a single paragraph element. Returns updated section_counter."""
     T = THEMES[theme]
-    IP = INDENT_PROFILES[T.get("indent_profile", "formal")]
     ns = NS["w"]
 
     text = get_para_text(p)
@@ -1430,28 +1061,9 @@ def format_paragraph(p, idx, total, theme, section_counter):
 
     pPr = get_pPr(p)
 
-    # Detect list items early — they get list-specific indentation
-    is_list, ilvl = detect_list_level(p)
-    if is_list:
-        # Apply bullet/numbered indent based on level
-        level_mult = ilvl + 1
-        bl = IP["bullet_left"] + (ilvl * IP["bullet_hanging"])
-        bh = IP["bullet_hanging"]
-        set_ind(pPr, left=bl, hanging=bh)
-        set_spacing(pPr, before=0, after=80, line=276, lineRule="auto")
-        ensure_jc(pPr, "both")
-        for r in p.findall(f"{{{ns}}}r"):
-            set_run_font(r)
-            rPr = r.find(f"{{{ns}}}rPr")
-            if rPr is not None:
-                col = rPr.find(f"{{{ns}}}color")
-                if col is None:
-                    col = etree.SubElement(rPr, f"{{{ns}}}color")
-                    col.set(f"{{{ns}}}val", T["body"])
-        return section_counter
-
     # ── Apply new style ───────────────────────────────────────────────────
     if new_style == "_CALLOUT_HEADER":
+        # Don't change style; handled below
         pass
     else:
         set_pStyle(pPr, new_style)
@@ -1463,8 +1075,7 @@ def format_paragraph(p, idx, total, theme, section_counter):
         set_spacing(pPr, before=360, after=100, line=240, lineRule="auto")
         ensure_jc(pPr, "left")
         set_pBdr_bottom(pPr, T["accent"], sz=8, space=4)
-        if IP["heading1_left"]:
-            set_ind(pPr, left=IP["heading1_left"])
+        # Ensure runs are coloured correctly
         for r in p.findall(f"{{{ns}}}r"):
             set_run_color(r, T["accent"])
             set_run_font(r)
@@ -1472,8 +1083,6 @@ def format_paragraph(p, idx, total, theme, section_counter):
     elif new_style == "Heading2":
         set_spacing(pPr, before=240, after=80, line=240, lineRule="auto")
         ensure_jc(pPr, "left")
-        if IP["heading2_left"]:
-            set_ind(pPr, left=IP["heading2_left"])
         for r in p.findall(f"{{{ns}}}r"):
             set_run_color(r, T["accent_light"])
             set_run_font(r)
@@ -1481,8 +1090,6 @@ def format_paragraph(p, idx, total, theme, section_counter):
     elif new_style == "Heading3":
         set_spacing(pPr, before=200, after=60, line=240, lineRule="auto")
         ensure_jc(pPr, "left")
-        if IP["heading3_left"]:
-            set_ind(pPr, left=IP["heading3_left"])
         for r in p.findall(f"{{{ns}}}r"):
             set_run_color(r, T["accent_light"])
             set_run_font(r)
@@ -1490,8 +1097,7 @@ def format_paragraph(p, idx, total, theme, section_counter):
     elif new_style in ("CoverTitle", "CoverSubtitle", "CoverLabel"):
         fill = T["primary"] if new_style in ("CoverTitle", "CoverLabel") else T["cover_sub"]
         set_shd_pPr(pPr, fill)
-        # No extra indent on cover block
-        set_ind(pPr, left=0, right=0, firstLine=0)
+        # Ensure white text on all runs
         for r in p.findall(f"{{{ns}}}r"):
             set_run_color(r, "FFFFFF")
             set_run_font(r)
@@ -1500,8 +1106,6 @@ def format_paragraph(p, idx, total, theme, section_counter):
     elif new_style == "Caption":
         set_spacing(pPr, before=60, after=160, line=240, lineRule="auto")
         ensure_jc(pPr, "center")
-        if IP["caption_left"] or IP["caption_right"]:
-            set_ind(pPr, left=IP["caption_left"], right=IP["caption_right"])
         for r in p.findall(f"{{{ns}}}r"):
             set_run_color(r, T["caption"])
             set_run_font(r)
@@ -1509,17 +1113,16 @@ def format_paragraph(p, idx, total, theme, section_counter):
     elif new_style == "PullQuote":
         set_spacing(pPr, before=160, after=160, line=276, lineRule="auto")
         set_pBdr_left(pPr, T["accent"])
-        set_ind(pPr, left=IP["pullquote_left"], right=IP["pullquote_right"])
         ensure_jc(pPr, "both")
         for r in p.findall(f"{{{ns}}}r"):
             set_run_color(r, T["italic_quote"])
             set_run_font(r)
 
     elif new_style == "_CALLOUT_HEADER":
+        # Management Recommendation / Key Concern: dark bg, white text
         set_pStyle(pPr, "Normal")
         set_shd_pPr(pPr, T["callout_bg"])
         set_spacing(pPr, before=120, after=60, line=240, lineRule="auto")
-        set_ind(pPr, left=IP["callout_left"], right=IP["callout_right"])
         ensure_jc(pPr, "left")
         for r in p.findall(f"{{{ns}}}r"):
             set_run_color(r, T["callout_text"])
@@ -1528,16 +1131,13 @@ def format_paragraph(p, idx, total, theme, section_counter):
     else:
         # Normal body text
         set_spacing(pPr, before=0, after=120, line=276, lineRule="auto")
-        # Apply first-line indent if the profile requests it
-        set_ind(pPr,
-                left=IP["body_left"] if IP["body_left"] else None,
-                right=IP["body_right"] if IP["body_right"] else None,
-                firstLine=IP["body_first_line"] if IP["body_first_line"] else None)
         ensure_jc(pPr, "both")
         for r in p.findall(f"{{{ns}}}r"):
             set_run_font(r)
+            # Preserve existing bold, italic, size but normalise font & color
             rPr = r.find(f"{{{ns}}}rPr")
             if rPr is not None:
+                # Only set colour if not already set (preserve theme-coloured runs)
                 col = rPr.find(f"{{{ns}}}color")
                 if col is None:
                     col = etree.SubElement(rPr, f"{{{ns}}}color")
@@ -1649,27 +1249,13 @@ def format_document(input_path, output_path, theme="forest", report_label=None):
     with open(styles_path, "w", encoding="utf-8") as f:
         f.write(build_styles_xml(theme))
 
-    # ── Write numbering.xml ───────────────────────────────────────────────
-    numbering_path = work_dir / "word" / "numbering.xml"
-    with open(numbering_path, "w", encoding="utf-8") as f:
-        f.write(build_numbering_xml(theme))
-    _wire_numbering(work_dir, ns_r)
-
     # ── Write footer1.xml ─────────────────────────────────────────────────
     footer_path = work_dir / "word" / "footer1.xml"
     with open(footer_path, "w", encoding="utf-8") as f:
         f.write(build_footer_xml(theme, report_label))
 
-    # ── Write settings.xml ────────────────────────────────────────────────
-    settings_path = work_dir / "word" / "settings.xml"
-    with open(settings_path, "w", encoding="utf-8") as f:
-        f.write(build_settings_xml())
-
     # ── Ensure footer is wired into sectPr and relationships ─────────────
     _wire_footer(work_dir, ns, ns_r)
-
-    # ── Apply page layout (size + margins) ────────────────────────────────
-    _apply_page_layout(work_dir, theme, ns)
 
     # ── Repack ────────────────────────────────────────────────────────────
     with zipfile.ZipFile(output_path, "w", zipfile.ZIP_DEFLATED) as zout:
@@ -1680,54 +1266,6 @@ def format_document(input_path, output_path, theme="forest", report_label=None):
 
     shutil.rmtree(work_dir)
     print(f"  ✓ Done → {output_path}")
-
-
-def _apply_page_layout(work_dir, theme, ns):
-    """
-    Patch (or create) the sectPr in document.xml with page size and margins
-    from the theme's PAGE_LAYOUT profile.
-    """
-    T  = THEMES[theme]
-    PL = PAGE_LAYOUTS[T.get("page_layout", "a4_standard")]
-
-    doc_xml_path = work_dir / "word" / "document.xml"
-    tree = etree.parse(str(doc_xml_path))
-    root = tree.getroot()
-    body = root.find(f"{{{ns}}}body")
-    if body is None:
-        return
-
-    # sectPr must be the LAST element in body
-    sectPr = body.find(f"{{{ns}}}sectPr")
-    if sectPr is None:
-        sectPr = etree.SubElement(body, f"{{{ns}}}sectPr")
-
-    def _set_or_create(parent, tag_local, attrs):
-        el = parent.find(f"{{{ns}}}{tag_local}")
-        if el is None:
-            el = etree.SubElement(parent, f"{{{ns}}}{tag_local}")
-        for k, v in attrs.items():
-            el.set(f"{{{ns}}}{k}", str(v))
-        return el
-
-    _set_or_create(sectPr, "pgSz", {
-        "w": PL["page_width"],
-        "h": PL["page_height"],
-    })
-    _set_or_create(sectPr, "pgMar", {
-        "top":    PL["margin_top"],
-        "right":  PL["margin_right"],
-        "bottom": PL["margin_bottom"],
-        "left":   PL["margin_left"],
-        "header": PL["margin_header"],
-        "footer": PL["margin_footer"],
-        "gutter": PL["gutter"],
-    })
-    # Turn on widow/orphan control for the whole section
-    _set_or_create(sectPr, "widowControl", {})
-
-    tree.write(str(doc_xml_path), xml_declaration=True, encoding="UTF-8", standalone=True)
-
 
 
 def _wire_footer(work_dir, ns, ns_r):
