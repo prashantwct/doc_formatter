@@ -186,17 +186,6 @@ st.set_page_config(page_title="WCT Report Formatter", layout="centered")
 st.title("📄 Report Formatter")
 st.write("Upload a draft Word document to automatically apply standard publication formatting.")
 
-# --- UI Controls ---
-uploaded_file = st.file_uploader("Upload .docx Draft", type="docx")
-
-col1, col2 = st.columns(2)
-with col1:
-    # Add a "Custom Builder" option to the dropdown
-    theme_options = list(cdf.THEMES.keys()) + ["Custom Builder..."]
-    theme_choice = st.selectbox("Select Theme", theme_options, index=0)
-with col2:
-    custom_label = st.text_input("Custom Footer Label", placeholder="e.g., Q2 Intervention Summary")
-
 # --- Custom Theme Builder UI ---
 active_theme = theme_choice
 
