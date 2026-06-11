@@ -160,6 +160,7 @@ def build_styles_xml(theme):
   <w:style w:type="paragraph" w:styleId="CoverTitle">
     <w:name w:val="CoverTitle"/>
     <w:basedOn w:val="Normal"/>
+    <w:qFormat/>
     <w:pPr><w:shd w:val="clear" w:color="auto" w:fill="{T['primary']}"/><w:spacing w:before="80" w:after="80" w:line="240" w:lineRule="auto"/><w:jc w:val="left"/></w:pPr>
     <w:rPr><w:b/><w:bCs/><w:color w:val="FFFFFF"/><w:sz w:val="40"/><w:szCs w:val="40"/></w:rPr>
   </w:style>
@@ -474,6 +475,11 @@ def set_run_color(r, color):
     col.set(f"{{{ns}}}val", color)
 
 def set_run_font(r, font="Arial"):
+    """
+    Forces a strict font family update. It strips out Word's internal
+    Theme overrides (which often cause fonts to fail to update) and locks
+    the typeface to the specified font.
+    """
     ns = NS["w"]
     rPr = r.find(f"{{{ns}}}rPr")
     if rPr is None:
@@ -482,6 +488,12 @@ def set_run_font(r, font="Arial"):
     rf = rPr.find(f"{{{ns}}}rFonts")
     if rf is None:
         rf = etree.SubElement(rPr, f"{{{ns}}}rFonts")
+        
+    # Strip hidden theme attributes that override explicit fonts
+    for attr in ["asciiTheme", "hAnsiTheme", "cstheme", "eastAsiaTheme", "eastAsia"]:
+        if f"{{{ns}}}{attr}" in rf.attrib:
+            del rf.attrib[f"{{{ns}}}{attr}"]
+            
     rf.set(f"{{{ns}}}ascii", font)
     rf.set(f"{{{ns}}}hAnsi", font)
     rf.set(f"{{{ns}}}cs", font)
@@ -736,12 +748,14 @@ def format_paragraph(p, idx, total, theme, section_counter):
             set_run_font(r)
 
     else:
+        # Standard Body Processing
         set_spacing(pPr, before=0, after=120, line=276, lineRule="auto")
         set_ind(pPr,
                 left=IP["body_left"] if IP["body_left"] else None,
                 right=IP["body_right"] if IP["body_right"] else None,
                 firstLine=IP["body_first_line"] if IP["body_first_line"] else None)
         ensure_jc(pPr, "both")
+        
         for r in p.findall(f"{{{ns}}}r"):
             set_run_font(r)
             rPr = r.find(f"{{{ns}}}rPr")
@@ -750,6 +764,14 @@ def format_paragraph(p, idx, total, theme, section_counter):
                 if col is None:
                     col = etree.SubElement(rPr, f"{{{ns}}}color")
                     col.set(f"{{{ns}}}val", T["body"])
+                
+                # UNIFORM FONT SIZE ENFORCEMENT:
+                # If this is normal body text, we strip out any manual font-sizes that
+                # were copy-pasted so it perfectly inherits the standard 11pt style.
+                sz = rPr.find(f"{{{ns}}}sz")
+                if sz is not None: rPr.remove(sz)
+                szCs = rPr.find(f"{{{ns}}}szCs")
+                if szCs is not None: rPr.remove(szCs)
 
     for r in p.findall(f"{{{ns}}}r"):
         set_run_font(r)
@@ -908,6 +930,11 @@ def format_document(input_path, output_path, theme="forest", report_label=None):
 
     for tbl in tables:
         format_table(tbl, theme)
+        
+    # GLOBAL FONT ENFORCER: Final sweep of every text string in the document 
+    # to catch any hidden runs outside standard paragraphs that didn't get converted
+    for r in root.iter(f"{{{ns}}}r"):
+        set_run_font(r, "Arial")
 
     tree.write(str(doc_xml_path), xml_declaration=True, encoding="UTF-8", standalone=True)
 
