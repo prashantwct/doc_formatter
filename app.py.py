@@ -179,10 +179,3 @@ if uploaded_file is not None:
             finally:
                 if os.path.exists(input_path):  os.remove(input_path)
                 if os.path.exists(output_path): os.remove(output_path)
-
-
-st.set_page_config(page_title="WCT Report Formatter", layout="centered")
-
-st.title("📄 Report Formatter")
-st.write("Upload a draft Word document to automatically apply standard publication formatting.")
-
